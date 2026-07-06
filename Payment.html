@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Payment Xyron</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{
+  background:url('https://files.catbox.moe/2brudf.jpg') center center/cover no-repeat fixed;
+  min-height:100vh;
+  overflow-x:hidden;
+  padding:40px 15px;
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(3px);
+  z-index:0;
+}
+.wrap{
+  position:relative;
+  z-index:2;
+  width:480px;
+  max-width:100%;
+  margin:0 auto;
+}
+
+/* ===== WELCOME CARD ===== */
+.card{
+  position:relative;
+  padding:35px;
+  border-radius:30px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border:1.5px solid rgba(255,255,255,.2);
+  box-shadow:0 0 40px rgba(255,0,120,.15),0 0 80px rgba(0,170,255,.08),inset 0 0 1px white;
+  text-align:center;
+  animation:fade .8s;
+}
+@keyframes fade{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:none;}}
+
+.icon{
+  width:70px;height:70px;margin:auto;border-radius:20px;
+  background:linear-gradient(135deg,#6d5fa8,#4b3f72);
+  display:flex;justify-content:center;align-items:center;
+  font-size:34px;box-shadow:0 0 25px rgba(75,63,114,.6);margin-bottom:25px;
+}
+.title1{color:white;font-size:15px;letter-spacing:8px;}
+.title2{
+  font-size:56px;font-weight:800;
+  color:#eae6ff;
+  margin-top:-5px;
+}
+.desc{margin-top:12px;color:#ddd;line-height:1.7;font-size:14px;}
+.info{display:flex;justify-content:space-around;margin:30px 0;color:white;font-size:14px;flex-wrap:wrap;gap:10px;}
+.info div{display:flex;align-items:center;gap:8px;}
+
+.enter{
+  width:100%;height:60px;border:none;border-radius:40px;font-size:18px;font-weight:600;color:white;
+  cursor:pointer;background:#4b3f72;
+  box-shadow:0 4px 20px rgba(0,0,0,.35);transition:.25s;
+  letter-spacing:.5px;
+}
+.enter:hover{background:#584a85;transform:translateY(-1px);}
+
+.online{
+  margin-top:25px;padding:10px;border-radius:20px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+  color:white;backdrop-filter:blur(12px);font-size:13px;
+}
+
+/* ===== PAYMENT SCREEN ===== */
+.payment{display:none;animation:fade .7s;}
+.status-bar{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  color:#ddd;font-size:13px;margin-bottom:16px;
+}
+.status-bar .dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;}
+
+.panel{
+  background:rgba(255,255,255,.06);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:22px;padding:18px 20px;margin-bottom:14px;color:white;
+}
+.store-row{display:flex;align-items:center;gap:14px;}
+.store-icon{
+  width:46px;height:46px;border-radius:14px;
+  background:linear-gradient(135deg,#6d5fa8,#4b3f72);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;
+}
+.store-info{flex:1;}
+.store-info b{font-size:15px;}
+.store-info div{font-size:12.5px;color:#bbb;margin-top:2px;}
+.live{
+  display:inline-flex;align-items:center;gap:5px;color:#22c55e;font-size:12px;font-weight:600;
+  background:rgba(34,197,94,.12);padding:4px 10px;border-radius:20px;
+}
+.live .ldot{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;}
+.store-status-txt{font-size:11px;color:#999;text-align:right;margin-top:4px;}
+
+/* method header (clickable) */
+.method{cursor:pointer;}
+.method-head{display:flex;align-items:center;gap:14px;}
+.method-logo{
+  width:46px;height:46px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;color:white;flex-shrink:0;
+}
+.logo-qris{background:linear-gradient(135deg,#6d5fa8,#4b3f72);}
+.logo-dana{background:#3a6ea5;}
+.logo-gopay{background:#2f8f5b;}
+.logo-telegram{background:#229ED9;}
+.method-info{flex:1;}
+.method-info b{font-size:15.5px;}
+.method-info div{font-size:12.5px;color:#bbb;margin-top:2px;}
+.chevron{
+  width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;color:#fff;transition:.3s;
+}
+.chevron.open{transform:rotate(180deg);}
+
+.method-body{
+  max-height:0;overflow:hidden;transition:max-height .35s ease;
+}
+.method-body.open{max-height:900px;margin-top:18px;}
+
+.qr-flex{display:flex;gap:18px;flex-wrap:wrap;}
+.qr-card{
+  background:white;border-radius:14px;padding:14px;width:210px;flex-shrink:0;color:#111;text-align:center;
+}
+.qr-card img{width:100%;display:block;border-radius:4px;margin:8px 0;}
+.qr-brand{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;color:#c0392b;}
+.qr-brand span:last-child{color:#c0392b;}
+.qr-store-name{font-weight:800;font-size:13px;margin-top:6px;}
+.qr-nmid{font-size:9px;color:#555;margin-top:2px;}
+.qr-footer{font-size:8px;color:#666;line-height:1.4;margin-top:6px;}
+
+.steps{flex:1;min-width:200px;}
+.steps b{color:#c9c2e8;font-size:13px;letter-spacing:1px;display:block;margin-bottom:10px;}
+.steps ol{list-style:none;counter-reset:step;}
+.steps li{
+  counter-increment:step;font-size:13px;color:#eee;margin-bottom:10px;
+  padding-left:28px;position:relative;line-height:1.4;
+}
+.steps li::before{
+  content:counter(step);position:absolute;left:0;top:-1px;
+  width:20px;height:20px;border-radius:50%;border:1px solid rgba(255,255,255,.4);
+  display:flex;align-items:center;justify-content:center;font-size:11px;
+}
+
+.nominal-box{margin-top:16px;}
+.nominal-box label{font-size:12.5px;color:#ccc;display:block;margin-bottom:6px;}
+.nominal-box input{
+  width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.07);color:white;font-size:14px;outline:none;
+}
+.copy-row{display:flex;gap:10px;}
+.an-text{margin-top:8px;font-size:12.5px;color:#ccc;}
+.copy-row input{flex:1;}
+.copy-btn{
+  padding:0 20px;border:1px solid rgba(255,255,255,.25);border-radius:12px;font-weight:600;font-size:13px;color:white;
+  background:rgba(255,255,255,.1);cursor:pointer;white-space:nowrap;
+  transition:.2s;
+}
+.copy-btn:hover{background:rgba(255,255,255,.18);}
+.copy-btn:active{transform:scale(.96);}
+.copy-btn.copied{background:#22c55e;border-color:#22c55e;}
+
+.secure-footer{
+  margin-top:6px;text-align:center;color:#bbb;font-size:12px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== WELCOME ===== -->
+  <div id="welcome" class="card">
+    <div class="icon">💳</div>
+    <div class="title1">WELCOME TO</div>
+    <div class="title2">Payment Xyron</div>
+    <div class="desc">Selesaikan pembayaran Anda dengan metode yang tersedia secara aman dan cepat.</div>
+    <div class="info">
+      <div>🛡 Aman</div>
+      <div>⚡ Cepat</div>
+      <div>✔ Terpercaya</div>
+    </div>
+    <button class="enter" onclick="openPayment()">&#8250; MASUK KE PAYMENT</button>
+    <div class="online">🟢 ONLINE • Pembayaran 24/7</div>
+  </div>
+
+  <!-- ===== PAYMENT ===== -->
+  <div id="payment" class="payment">
+
+    <div class="status-bar"><span class="dot"></span> ONLINE • Pembayaran 24/7</div>
+
+    <div class="panel">
+      <div class="store-row">
+        <div class="store-icon">DS</div>
+        <div class="store-info">
+          <b>Xyron Store</b>
+          <div>Solusi Top Up &amp; Pembayaran Terpercaya</div>
+        </div>
+        <div>
+          <div class="live"><span class="ldot"></span> LIVE</div>
+          <div class="store-status-txt">Selalu Aktif</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QRIS -->
+    <div class="panel method" onclick="toggleMethod('qris')">
+      <div class="method-head">
+        <div class="method-logo logo-qris">QRIS</div>
+        <div class="method-info">
+          <b>QRIS</b>
+          <div>Scan QR Code untuk pembayaran</div>
+        </div>
+        <div class="chevron open" id="chev-qris">⌄</div>
+      </div>
+      <div class="method-body open" id="body-qris" onclick="event.stopPropagation()">
+        <div class="qr-flex">
+          <div class="qr-card">
+            <div class="qr-brand"><span>QRIS</span><span>GPN</span></div>
+            <div style="font-size:9px;color:#555;text-align:left;">QR Code Standar Pembayaran Nasional</div>
+            <!-- Ganti src di bawah ini dengan gambar QRIS DANA Bisnis Anda -->
+            <img id="qrisImg" src="https://files.catbox.moe/rkf1pa.jpeg" alt="QRIS Code">
+            <div class="qr-store-name">sertakan bukti transfer</div>
+            <div class="qr-footer">
+              SATU QRIS UNTUK SEMUA<br>
+              Cek aplikasi penyelenggara di: www.aspi-qris.id<br>
+            </div>
+          </div>
+          <div class="steps">
+            <b>CARA PEMBAYARAN</b>
+            <ol>
+              <li>Buka aplikasi e-wallet atau mobile banking</li>
+              <li>Pilih menu Scan QR</li>
+              <li>Scan QR Code di samping</li>
+              <li>Konfirmasi pembayaran</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DANA -->
+    <div class="panel method" onclick="toggleMethod('dana')">
+      <div class="method-head">
+        <div class="method-logo logo-dana">DANA</div>
+        <div class="method-info">
+          <b>DANA</b>
+          <div>Bayar mudah dengan DANA</div>
+        </div>
+        <div class="chevron" id="chev-dana">⌄</div>
+      </div>
+      <div class="method-body" id="body-dana" onclick="event.stopPropagation()">
+        <div class="nominal-box">
+          <label>Nomor DANA Tujuan</label>
+          <div class="copy-row">
+            <input type="text" id="danaNumber" value="0881011075415" readonly>
+            <button class="copy-btn" onclick="copyNumber('danaNumber', this)">SALIN</button>
+          </div>
+          <div class="an-text">A/n : R***** E******* P****** S******</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELEGRAM -->
+    <a href="https://t.me/siapamklowh" target="_blank" rel="noopener" style="text-decoration:none;">
+      <div class="panel method">
+        <div class="method-head">
+          <div class="method-logo logo-telegram">TG</div>
+          <div class="method-info">
+            <b>TELEGRAM</b>
+            <div>Hubungi kami langsung via Telegram</div>
+          </div>
+          <div class="chevron" style="transform:rotate(-90deg);">⌄</div>
+        </div>
+      </div>
+    </a>
+
+    <div class="secure-footer">🔒 Keamanan terjamin dengan sistem enkripsi 256-bit</div>
+  </div>
+
+</div>
+
+<script>
+function openPayment(){
+  document.getElementById("welcome").style.display="none";
+  document.getElementById("payment").style.display="block";
+}
+
+function toggleMethod(name){
+  const body = document.getElementById('body-'+name);
+  const chev = document.getElementById('chev-'+name);
+  const isOpen = body.classList.contains('open');
+
+  // close all
+  ['qris','dana'].forEach(m=>{
+    document.getElementById('body-'+m).classList.remove('open');
+    document.getElementById('chev-'+m).classList.remove('open');
+  });
+
+  // open clicked one if it wasn't already open
+  if(!isOpen){
+    body.classList.add('open');
+    chev.classList.add('open');
+  }
+}
+
+function copyNumber(inputId, btn){
+  const input = document.getElementById(inputId);
+  navigator.clipboard.writeText(input.value).then(()=>{
+    const original = btn.textContent;
+    btn.textContent = "TERSALIN";
+    btn.classList.add('copied');
+    setTimeout(()=>{
+      btn.textContent = original;
+      btn.classList.remove('copied');
+    }, 1500);
+  }).catch(()=>{
+    input.select();
+    document.execCommand('copy');
+  });
+}
+</script>
+
+</body>
+  </html>
+  
